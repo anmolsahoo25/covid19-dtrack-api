@@ -64,14 +64,15 @@ def update_cases():
         # return list of all cases
         raw_cases = SuspectedCase.query.all()
         cases = list(map(lambda x : {
-          'mac' : x.device_mac_addr,
+          'device_id' : x.device_bluetooth_id.hex(),
           'diag_or_susp' : x.diagnosed_or_suspected}, raw_cases))
         return {'cases' : cases}
     elif request.method == 'POST':
-        # create new case
-        mac = request.form['mac']
-        diag_or_susp = bool(request.form['diag_or_susp'])
-        case_to_add = SuspectedCase(device_mac_addr = mac, diagnosed_or_suspected = diag_or_susp)
-        db.session.add(case_to_add)
-        db.session.commit()
-        return {'msg' : 'created'}
+        # # create new case
+        # device_id = bytes.fromhex(request.form['device_id'])
+        # diag_or_susp = bool(request.form['diag_or_susp'])
+        # case_to_add = SuspectedCase(device_bluetooth_id = device_id, diagnosed_or_suspected = diag_or_susp)
+        # db.session.add(case_to_add)
+        # db.session.commit()
+        # return {'msg' : 'created'}
+        return jsonify({'msg' : 'Needs admin access'}), 401
