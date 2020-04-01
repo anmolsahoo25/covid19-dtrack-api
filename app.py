@@ -29,9 +29,6 @@ class DeviceBluetoothId(db.Model):
 
 @app.route('/auth', methods=['POST'])
 def auth():
-    if not request.is_json:
-        return jsonify({'msg' : 'Missing JSON in request'}), 400
-
     # implement phone auth
 
     # phone auth succesful, generate ID and check if
@@ -55,7 +52,7 @@ def auth():
         identity = new_id.hex(), expires_delta = expires)
 
     # return the access token
-    return jsonify(access_token=access_token), 200
+    return jsonify(access_token=access_token, device_id=new_id.hex()), 200
 
 @app.route('/cases', methods=['GET', 'POST'])
 @jwt_required
