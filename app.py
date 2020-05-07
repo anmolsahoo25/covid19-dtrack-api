@@ -1,12 +1,15 @@
 import os
+import sys
 from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
+from b2blaze import B2
+import tempfile
 
-UPLOAD_FOLDER = '/path/to/the/uploads'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+b2 = B2()
+bucket = b2.buckets.get('vinod-project1')
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -27,9 +30,15 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
-                                    filename=filename))
+            tmpdir = tempfile.TemporaryDirectory()
+            tmpfile = os.path.join(tmpdir.name,'tmpfile')
+            file.save(tmpfile)
+            bucket.files.upload(contents=open(tmpfile, 'rb'), file_name = filename)
+            return '''
+                <!doctype html>
+                    <h1> Done! </h1>
+                </html>
+            '''
     return '''
     <!doctype html>
     <title>Upload new File</title>
