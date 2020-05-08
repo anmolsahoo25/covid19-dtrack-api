@@ -9,7 +9,7 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 b2 = B2()
-bucket = b2.buckets.get('vinod-project1')
+bucket = b2.buckets.get('latency')
 
 def allowed_file(filename):
     return '.' in filename and \
